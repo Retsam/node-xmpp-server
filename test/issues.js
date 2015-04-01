@@ -3,6 +3,7 @@
 var Element = require('node-xmpp-core').Stanza.Element
   , C2SServer = require('../index').C2SServer
   , net = require('net')
+  , waitFor = require('./util/waitFor')
 
 require('should')
 
@@ -66,23 +67,15 @@ describe('Stream without proper "to" attribute', function() {
         })
 
         it('Should return error to client', function(done) {
-            var end = new Date().getTime() + 2000
-            while (streamData !== true) {
-                if (new Date().getTime() >= end) {
-                    done()
-                    break
-                }
-            }
+            waitFor(function () {
+                return streamData;
+            }, done)
         })
 
         it('Should close stream', function(done) {
-            var end = new Date().getTime() + 2000
-            while (streamClosed === true) {
-                if (new Date().getTime() >= end) {
-                    done()
-                    break
-                }
-            }
+            waitFor(function () {
+                return streamClosed
+            }, done)
         })
 
         it('Should generate error event on server', function(done) {
